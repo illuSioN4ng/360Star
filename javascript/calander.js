@@ -1,116 +1,156 @@
 /**
  * Created by illuSioN4ng on 2016/4/6.
  */
-function $(id) {
-    return document.getElementById(id);
-}
+var calander360Star = (function(){
+    var nowDay = new Date(),
+        year=parseInt(nowDay.getFullYear()),
+        month=parseInt(nowDay.getMonth());
 
-var nowDay = new Date();
-var year=parseInt(nowDay.getFullYear());
-var month=parseInt(nowDay.getMonth());
+    //æ˜¾ç¤ºè¯¥å¹´è¯¥æœˆçš„æ—¥å†
+    var _makeDays = function(year,month){
+        var firstDay = new Date(year,month,1),
+            lastDay = new Date(year,month,_getDayCountByYearAndMonth(year,month)),
+        //è·å¾—æ¯æœˆçš„å‰é¢ç©ºä½™çš„å¤©æ•°
+            firstDayBefore = parseInt(firstDay.getDay()),
+            lastDayOfLastMonth = _getDayCountByYearAndMonth(year,month - 1),
+        //è·å¾—æ¯æœˆçš„åé¢ç©ºä½™çš„å¤©æ•°
+            lastDayAfter = 6 - parseInt(lastDay.getDay()),
+            dayobj = null;
+        //console.log(firstDayBefore);
+        //æ˜¾ç¤ºæ¯æœˆå‰é¢ç©ºä½™çš„å¤©æ•°
+        for(var i= 0; i < firstDayBefore; i++) {
+            dayobj = document.createElement("div");
+            dayobj.className="dayOfOtherMonth";
+            dayobj.innerHTML = lastDayOfLastMonth - firstDayBefore + i + 1;
+            document.getElementById("days").appendChild(dayobj);
+        }
+        //æ˜¾ç¤ºæ¯æœˆçš„å¤©æ•°
+        for(i=1;i <= _getDayCountByYearAndMonth(year,month); i++)
+        {
+            dayobj = document.createElement("div");
+            dayobj.className="day";
+            dayobj.name=year+"-"+(parseInt(month)+1)+"-"+i;
+            document.getElementById("days").appendChild(dayobj);
+            dayobj.innerHTML = i;
+
+            //è®¾ç½®å½“å¤©çš„æ ·å¼
+            if(nowDay.getFullYear()==year && nowDay.getMonth()==month && nowDay.getDate()==i)
+            {
+                dayobj.id="thisDay";
+            }
+
+            dayobj.onmouseover= function(){
+                this.style.backgroundColor="#f5f5f5";
+            };
+
+            dayobj.onmouseout= function(){
+                this.style.backgroundColor="#fff";
+            };
+
+            dayobj.onclick= function(){
+                //document.getElementById("borthTextAre").value=this.name;
+                //document.getElementById("borthTextAre").innerHTML = document.getElementById("borthTextAre").value;
+                //document.getElementById("borthTextAre").innerHTML="ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ£ï¿½"+this.name;
+                document.getElementById("borthText").value = this.name;
+            }
+        }
+        //æ˜¾ç¤ºæ¯æœˆåç©ºä½™çš„å¤©æ•°
+        for(i= 0; i < lastDayAfter; i++) {
+            dayobj = document.createElement("div");
+            dayobj.className="dayOfOtherMonth";
+            dayobj.innerHTML = i + 1;
+            document.getElementById("days").appendChild(dayobj);
+        }
+    };
+
+
+    //è®¡ç®—è¯¥å¹´è¯¥æœˆçš„å¤©æ•°
+    var _getDayCountByYearAndMonth = function(year,month){
+        month++;
+        if(month===4 || month===6 || month===9 || month===11)
+            return 30;
+        if(month===2)
+        {
+            if(((year%4===0)&&(year%100!==0)) || (year%400 === 0))
+                return 28;
+            return 29;
+        }
+        return 31;
+    };
+
+    var _chose = function(ele){
+        if(ele.id == "setYear"){
+            year = ele.value;
+        }
+        if(ele.id == "setMonth"){
+            month = ele.value;
+        }
+        document.getElementById("days").innerHTML="";
+        _makeDays(year,month);
+        //return this;
+    };
+
+    var _builtSetYearAndMonth = function(yearNum){
+        for(var i=-yearNum; i<yearNum;i++){
+            var yearObj = document.createElement("option");
+            yearObj.innerHTML = parseInt(nowDay.getFullYear())+i;
+            yearObj.value = parseInt(nowDay.getFullYear())+i;
+            document.getElementById("setYear").appendChild(yearObj);
+        }
+        for(i = 0; i < 12; i++)
+        {
+            var monthObj = document.createElement("option");
+            monthObj.innerHTML = i + 1;
+            monthObj.value = i;
+            document.getElementById("setMonth").appendChild(monthObj);
+        }
+        document.getElementById("setYear").selectedIndex = yearNum;
+        document.getElementById("setMonth").selectedIndex = parseInt(nowDay.getMonth());
+        _makeDays(parseInt(year),parseInt(month));
+    };
+
+    //æ¸²æŸ“æ—¥å†ä¸»ä½“ç»“æ„
+    var _render = function(id){
+        var wrapId = document.getElementById(id);
+        wrapId.innerHTML = '<div id="borthTextAre" >ä½ çš„ç”Ÿæ—¥ï¼š<input id="borthText" type="text" /></div><div id="setDate"> é€‰æ‹©å¹´ä»½ï¼š<select id="setYear"></select>  é€‰æ‹©æœˆä»½ï¼š<select id="setMonth"></select> </div><!-- æ—¥å† begin--> <div id ="dateBody"> <div class="weekday">æ—¥</div> <div class="weekday">ä¸€</div> <div class="weekday">äºŒ</div> <div class="weekday">ä¸‰</div> <div class="weekday">å››</div> <div class="weekday">äº”</div> <div class="weekday">å…­</div><!-- æ—¥å†å¤©æ•°æ˜¾ç¤º begin--> <div  id="days"></div><!-- æ—¥å†å¤©æ•°æ˜¾ç¤º end--><br style="clear:both;" /></div> <!--æ—¥å† end -->';
+    }
+
+    var _bind = function(that){
+        that.onchange = function(){
+            var id = that.id,
+                value = that.value;
+            if(id === "setYear"){
+                year = value;
+                //console.log(year);
+            }
+            if(id === "setMonth"){
+                month = value;
+                //console.log(month);
+            }
+            document.getElementById("days").innerHTML="";
+            _makeDays(year,month);
+        };
+    };
+
+    var CalanderFunc = function(){
+
+    };
+    //åˆå§‹åŒ–
+    CalanderFunc.prototype.init = function(config){//configé…ç½®å¯¹è±¡
+        var yearNum = config.yearNum;
+        _render(config.wrapId);
+        _builtSetYearAndMonth(yearNum);
+        _bind(document.getElementById('setYear'));
+        _bind(document.getElementById('setMonth'));
+        return this;
+    }
+
+    return CalanderFunc;
+})();
 
 window.onload = function(){
-    builtSetYearAndMonth(100);
+    new calander360Star().init({
+        yearNum: 100,
+        wrapId: 'calander-wrap'
+    });
 };
-
-//ÏÔÊ¾¸ÃÄê¸ÃÔÂµÄÈÕÀú
-
-function makeDays(year,month)
-{
-
-    var firstDay = new Date(year,month,1),
-        lastDay = new Date(year,month,getDayCountByYearAndMonth(year,month)),
-        //»ñµÃÃ¿ÔÂµÄÇ°Ãæ¿ÕÓàµÄÌìÊı
-        firstDayBefore = parseInt(firstDay.getDay()),
-        lastDayOfLastMonth = getDayCountByYearAndMonth(year,month - 1),
-        lastDayAfter = 6 - parseInt(lastDay.getDay());
-    //ÏÔÊ¾Ã¿ÔÂÇ°Ãæ¿ÕÓàµÄÌìÊı
-    for(var i= 0; i < firstDayBefore; i++) {
-        dayobj = document.createElement("div");
-        dayobj.className="dayOfOtherMonth";
-        dayobj.innerHTML = lastDayOfLastMonth - firstDayBefore + i + 1;
-        $("days").appendChild(dayobj);
-    }
-    //ÏÔÊ¾Ã¿ÔÂµÄÌìÊı
-    for(var i=1;i<=getDayCountByYearAndMonth(year,month);i++)
-    {
-        dayobj = document.createElement("div");
-        dayobj.className="day";
-        dayobj.name=year+"-"+(parseInt(month)+1)+"-"+i;
-        $("days").appendChild(dayobj);
-        dayobj.innerHTML = i;
-
-        //ÉèÖÃµ±ÌìµÄÑùÊ½
-        if(nowDay.getFullYear()==year && nowDay.getMonth()==month && nowDay.getDate()==i)
-        {
-            dayobj.id="thisDay";
-        }
-
-        dayobj.onmouseover= function(){
-            this.style.backgroundColor="#f5f5f5";
-        }
-        dayobj.onmouseout= function(){
-            this.style.backgroundColor="#fff";
-        }
-        dayobj.onclick= function(){
-            //$("borthTextAre").value=this.name;
-            //$("borthTextAre").innerHTML = $("borthTextAre").value;
-            //$("borthTextAre").innerHTML="ÄãµÄÉúÈÕ£º"+this.name;
-            $("borthText").value = this.name;
-        }
-    }
-    //ÏÔÊ¾Ã¿ÔÂºó¿ÕÓàµÄÌìÊı
-    for(var i= 0; i < lastDayAfter; i++) {
-        dayobj = document.createElement("div");
-        dayobj.className="dayOfOtherMonth";
-        dayobj.innerHTML = i + 1;
-        $("days").appendChild(dayobj);
-    }
-}
-
-//¼ÆËã¸ÃÄê¸ÃÔÂµÄÌìÊı
-function getDayCountByYearAndMonth(year,month)
-{
-    month++;
-    if(month===4 || month===6 || month===9 || month===11)
-        return 30;
-    if(month===2)
-    {
-        if(((year%4===0)&&(year%100!==0)) || (year%400 === 0))
-            return 28;
-        return 29;
-    }
-    return 31;
-}
-//³õÊ¼»¯ÄêÔÂÑ¡ÔñÆ÷
-function builtSetYearAndMonth(yearNum)
-{
-    for(var i=-yearNum; i<yearNum;i++){
-        yearObj = document.createElement("option");
-        yearObj.innerHTML =parseInt(nowDay.getFullYear())+i;
-        yearObj.value =parseInt(nowDay.getFullYear())+i;
-        $("setYear").appendChild(yearObj);
-    }
-    for(var i=0;i<12;i++)
-    {
-        monthObj = document.createElement("option");
-        monthObj.innerHTML=i+1;
-        monthObj.value =i;
-        $("setMonth").appendChild(monthObj);
-    }
-    $("setYear").selectedIndex = yearNum;
-    $("setMonth").selectedIndex = parseInt(nowDay.getMonth());
-    makeDays(parseInt(year),parseInt(month));
-}
-
-function chose(ele)
-{
-    if(ele.id == "setYear"){
-        year = ele.value;
-    }
-    if(ele.id == "setMonth"){
-        month = ele.value;
-    }
-    $("days").innerHTML="";
-    makeDays(year,month);
-}
