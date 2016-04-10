@@ -1,16 +1,68 @@
-*{
+.calendar-container *{
     margin:0px;
     padding:0px;
+    font-family: '微软雅黑';
+}
+
+.calendar-container{
+    width: 600px;
 }
 
 #dateBody{
-    width:300px;
+    width:440px;
     padding:10px;
     background:#F2FFFF;
+    float: left;
+}
+
+.information{
+    padding:5px;
+    background:#F2FFFF;
+    float: left;
+    width: 130px;
+    font-size: 12px;
+    color: #999;
+}
+
+.date-bar{
+    color: #000;
+    margin: 15px 8px;
+}
+
+.now-weekday{
+    padding-left: 2px;
+}
+
+.date-show-today{
+    padding: 0 30px;
+    height: 60px;
+    line-height: 60px;
+    font-size: 60px;
+    color: #c00;
+    text-align: center;
+}
+
+.date-desc{
+    text-align: center;
+}
+
+.lunar, .lunar-ganzhi{
+    height: 25px;
+    line-height: 25px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.clearfix{
+    /*clear: both;*/
+    overflow: auto;
+    zoom: 1;
 }
 
 .weekday{
-    width:40px;
+    width:60px;
     height:40px;
     background:#fefbeb;
     line-height:30px;
@@ -22,7 +74,7 @@
 }
 
 .day{
-    width:40px;
+    width:60px;
     height:40px;
     background:#fff;
     line-height:40px;
@@ -33,7 +85,7 @@
 }
 
 .dayOfOtherMonth{
-    width:40px;
+    width:60px;
     height:40px;
     background:#f5f5f5;
     line-height:40px;
@@ -44,7 +96,7 @@
 }
 
 #thisDay{
-    width:40px;
+    width:60px;
     height:40px;
     background:#f5f5f5;
     line-height:40px;
@@ -54,18 +106,23 @@
 }
 
 #setDate{
-    width:320px;
+    width:600px;
     height:40px;
     background:#f3f5fa;
     vertical-align:middle;
     line-height:40px;
-    font-size:16px;
+    font-size:12px;
     font-weight:600;
     text-align:center;
+    color: #999;
+}
+
+#nowTime{
+    padding-left: 10px;
 }
 
 #borthTextAre{
-    width:320px;
+    width:600px;
     height:20px;
     background:#96F;
 }

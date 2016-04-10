@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日历test</title>
+
+    <link rel="stylesheet" href="./style/style.css"/>
+
+    <script src="javascript/1.js"></script>
+</head>
+
+<body>
+
+
+<div id="calendar-wrap">
+    <div class="calendar-container">
+        <div id="borthTextAre" >
+            你的生日：<input id="borthText" type="text" />
+        </div>
+
+        <div id="setDate">
+            选择年份：<select id="setYear"></select>
+            选择月份：<select id="setMonth"></select>
+            节假日安排：<select id="holiday"></select>
+            <button>返回今天</button>
+            <span id="nowTime">北京时间:09:43:47</span>
+        </div>
+
+        <!-- 日历 begin-->
+        <div class="main-calendar-body clearfix">
+            <div id ="dateBody">
+                <div class="weekday">日</div>
+                <div class="weekday">一</div>
+                <div class="weekday">二</div>
+                <div class="weekday">三</div>
+                <div class="weekday">四</div>
+                <div class="weekday">五</div>
+                <div class="weekday">六</div>
+                <!-- 日历天数显示 begin-->
+                <div  id="days"></div>
+                <!-- 日历天数显示 end-->
+                <br style="clear:both;" />
+            </div>
+            <div class="information">
+                <div class="almanac">
+                    <div class="date-bar">
+                        <span class="now-date">2016-01-02</span>
+                        <span class="now-weekday">星期六</span>
+                    </div>
+                    <div class="date-show-today">2</div>
+                    <div class="date-desc">
+                        <div class="lunar">农历十一月廿三</div>
+                        <div class="lunar-ganzhi">乙未年戊子月癸未日</div>
+                        <div class="other-info">[羊年]魔羯座</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--日历 end -->
+    </div>
+</div>
+</body>
+</html>

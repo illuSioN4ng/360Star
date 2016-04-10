@@ -1,7 +1,7 @@
 /**
  * Created by illuSioN4ng on 2016/4/6.
  */
-var calander360Star = (function(){
+var calendar360Star = (function(){
     var nowDay = new Date(),
         year=parseInt(nowDay.getFullYear()),
         month=parseInt(nowDay.getMonth());
@@ -132,11 +132,11 @@ var calander360Star = (function(){
         };
     };
 
-    var CalanderFunc = function(){
+    var CalendarFunc = function(){
 
     };
     //初始化
-    CalanderFunc.prototype.init = function(config){//config配置对象
+    CalendarFunc.prototype.init = function(config){//config配置对象
         var yearNum = config.yearNum;
         _render(config.wrapId);
         _builtSetYearAndMonth(yearNum);
@@ -145,11 +145,11 @@ var calander360Star = (function(){
         return this;
     }
 
-    return CalanderFunc;
+    return CalendarFunc;
 })();
 
 window.onload = function(){
-    new calander360Star().init({
+    new calendar360Star().init({
         yearNum: 100,
         wrapId: 'calander-wrap'
     });
