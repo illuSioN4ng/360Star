@@ -75,34 +75,72 @@
 
 .day{
     width:60px;
-    height:40px;
+    height:46px;
     background:#fff;
-    line-height:40px;
+    /*line-height:40px;*/
     margin:1px;
     text-align:center;
     float:left;
-    cursor: pointer
+    cursor: pointer;
+    overflow: hidden;
 }
 
+#returnToday{
+    display: inline-block;
+    /*float: left;*/
+    width: 60px;
+    height: 23px;
+    line-height: 25px;
+    background: #fff;
+    border: 1px solid #c9cccf;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
+}
 .dayOfOtherMonth{
     width:60px;
-    height:40px;
+    height:46px;
     background:#f5f5f5;
-    line-height:40px;
+    /*line-height:40px;*/
     margin:1px;
     text-align:center;
     float:left;
-    cursor: pointer
+    cursor: pointer;
+    overflow: hidden;
 }
 
-#thisDay{
-    width:60px;
-    height:40px;
-    background:#f5f5f5;
-    line-height:40px;
-    margin:1px;
-    text-align:center;
-    float:left;
+.solar{
+    width: 100%;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    font-weight: 600;
+    padding-top: 3px;
+}
+
+.lunar{
+    display: block;
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: #999;
+}
+
+.day .weekend{
+    color: #b04343;
+}
+
+.dayOfOtherMonth .weekend{
+    color: #b04343;
+}
+
+#thisDay {
+    background: url("../images/circle.gif") #fff no-repeat 10px 0;
 }
 
 #setDate{

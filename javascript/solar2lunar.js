@@ -30,7 +30,7 @@ var calendar = {
         0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,//2000-2009
         0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,//2010-2019
         0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,//2020-2029
-        0x05aa0,0x076a3,0x096d0,0x04bd7,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,//2030-2039
+        0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,//2030-2039
         0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,//2040-2049
         0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50, 0x06b20,0x1a6c4,0x0aae0,//2050-2059
         0x0a2e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,//2060-2069
@@ -76,7 +76,8 @@ var calendar = {
 
     /**
      * 1900-2100各年的24节气日期速查表
-     * 多少日信息，转化为十六进制*********
+     * 多少日信息，以十六进制数值存储，
+     * 使用时需进行划分成六个部分，并转化为十进制 一位+二位+一位以此类推
      * @Array Of Property
      * @return 0x string For splice
      */
@@ -170,10 +171,10 @@ var calendar = {
     /**
      * 月份转农历称呼速查表
      * @Array Of Property
-     * @trans ['正','一','二','三','四','五','六','七','八','九','十','冬','腊']
+     * @trans ['正','一','二','三','四','五','六','七','八','九','十','冬\u51ac','腊']
      * @return Cn string
      */
-    nStr3:["\u6b63","\u4e8c","\u4e09","\u56db","\u4e94","\u516d","\u4e03","\u516b","\u4e5d","\u5341","\u51ac","\u814a"],
+    nStr3:["\u6b63","\u4e8c","\u4e09","\u56db","\u4e94","\u516d","\u4e03","\u516b","\u4e5d","\u5341","\u5341\u4e00","\u814a"],
 
 
     /**
@@ -269,6 +270,7 @@ var calendar = {
             return -1;
         }
         var _table = calendar.sTermInfo[y-1900];
+        //console.log(_table);
         var _info = [
             parseInt('0x'+_table.substr(0,5)).toString() ,
             parseInt('0x'+_table.substr(5,5)).toString(),
@@ -277,6 +279,7 @@ var calendar = {
             parseInt('0x'+_table.substr(20,5)).toString(),
             parseInt('0x'+_table.substr(25,5)).toString()
         ];
+        //console.log(_info);
         var _calday = [
             _info[0].substr(0,1),
             _info[0].substr(1,2),
@@ -308,6 +311,7 @@ var calendar = {
             _info[5].substr(3,1),
             _info[5].substr(4,2),
         ];
+        //console.log(_calday);//***************************************
         return parseInt(_calday[n-1]);
     },
 
@@ -641,4 +645,4 @@ var calendar = {
     }
 };
 
-//console.log(calendar.getAnimal(2016));
+console.log(calendar.solar2lunar(2033, 12, 26));
