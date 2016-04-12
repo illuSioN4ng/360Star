@@ -3,6 +3,51 @@
  */
 var calendar360Star = (function(){
 
+    /**
+     *
+     * 2016年法定假日调休信息
+     * _ftvVacation为放假信息
+     * _ftvWorkday为调假信息
+     */
+    var _ftvVacation = {'0101': '元旦',
+            '0102':'元旦',
+            '0103':'元旦',
+            '0207':'春节',
+            '0208':'春节',
+            '0209':'春节',
+            '0210':'春节',
+            '0211':'春节',
+            '0212':'春节',
+            '0213':'春节',
+            '0402':'清明',
+            '0403':'清明',
+            '0404':'清明',
+            '0430':'劳动节',
+            '0501':'劳动节',
+            '0502':'劳动节',
+            '0609':'端午',
+            '0610':'端午',
+            '0611':'端午',
+            '0915':'中秋',
+            '0916':'中秋',
+            '0917':'中秋',
+            '1001':'国庆',
+            '1002':'国庆',
+            '1003':'国庆',
+            '1004':'国庆',
+            '1005':'国庆',
+            '1006':'国庆',
+            '1007':'国庆'
+        },
+        _ftvWorkday = {
+            '0206': '春节',
+            '0214': '春节',
+            '0612': '端午',
+            '0918': '中秋',
+            '1008': '国庆',
+            '1009': '国庆'
+        };
+
     var nowDay = new Date(),
         year=parseInt(nowDay.getFullYear()),
         month=parseInt(nowDay.getMonth());
@@ -12,120 +57,130 @@ var calendar360Star = (function(){
         document.getElementById('days').innerHTML = '';
         var count = 0;
         var firstDay = new Date(year,month,1),
-            lastDay = new Date(year,month,_getDayCountByYearAndMonth(year,month)),
+            //lastDay = new Date(year,month,_getDayCountByYearAndMonth(year,month)),
         //获得每月的前面空余的天数
             firstDayBefore = parseInt(firstDay.getDay()),
             lastDayOfLastMonth = _getDayCountByYearAndMonth(year,month - 1),
         //获得每月的后面空余的天数
-            lastDayAfter = 6 - parseInt(lastDay.getDay()),
+        //    lastDayAfter = 6 - parseInt(lastDay.getDay()),
             dayobj = null;
+            //dayInfo = [];
         //console.log(firstDayBefore);
         //显示每月前面空余的天数
         for(var i= 0; i < firstDayBefore; i++) {
             count++;
             dayobj = document.createElement("div");
-            dayobj.className="dayOfOtherMonth";
             if(parseInt(month) <= 0){
-                dayobj.name=parseInt(year-1) +"-"+ 12 +"-"+(lastDayOfLastMonth - firstDayBefore + i + 1);
+                dayobj.dataset.name=parseInt(year-1) +"-"+ 12 +"-"+(lastDayOfLastMonth - firstDayBefore + i + 1);
             }else{
-                dayobj.name=year+"-"+(parseInt(month))+"-"+(lastDayOfLastMonth - firstDayBefore + i + 1);
+                dayobj.dataset.name=year+"-"+(parseInt(month))+"-"+(lastDayOfLastMonth - firstDayBefore + i + 1);
             }
-            var dayInfo = dayobj.name.split('-'),
-                dayInfoDetail = calendar.solar2lunar(dayInfo[0], dayInfo[1], dayInfo[2]);
-            //dayobj.name=year+"-"+(parseInt(month))+"-"+(lastDayOfLastMonth - firstDayBefore + i + 1);
-            if(dayInfoDetail.nWeek === 6 || dayInfoDetail.nWeek === 7 ){
-                dayobj.innerHTML = '<div class="solar weekend">' + dayInfo[2] + '</div>' + '<div class="lunar">'+ dayInfoDetail.IDayCn + '</div>';
-            }else{
-                dayobj.innerHTML = '<div class="solar">' + dayInfo[2] + '</div>' + '<div class="lunar">'+ dayInfoDetail.IDayCn + '</div>';
-            }
-            document.getElementById("days").appendChild(dayobj);
-            dayobj.onclick= function(){
-                //document.getElementById("borthText").value = this.name;
-                var dayInfo = this.name.split('-');
-                //console.log(dayInfo);
-                _almanacRender(dayInfo);
-            }
+            //dayobj.className="dayOfOtherMonth";
+            _classCountByMonthAndDay(dayobj, 'dayOfOtherMonth');
+            _dayInformation(dayobj);
         }
         //显示每月的天数
         for(i=1;i <= _getDayCountByYearAndMonth(year,month); i++) {
             count++;
             dayobj = document.createElement("div");
-            dayobj.className="day";
-            dayobj.name = year + "-" + ( parseInt(month) + 1 ) + "-" + i;
-            //console.log(dayobj.name);
-            var dayInfo = dayobj.name.split('-'),
-                dayInfoDetail = calendar.solar2lunar(dayInfo[0], dayInfo[1], dayInfo[2]);
-            //dayobj.name=year+"-"+(parseInt(month))+"-"+(lastDayOfLastMonth - firstDayBefore + i + 1);
-            if(dayInfoDetail.nWeek === 6 || dayInfoDetail.nWeek === 7 ){
-                dayobj.innerHTML = '<div class="solar weekend">' + dayInfo[2] + '</div>' + '<div class="lunar">'+ dayInfoDetail.IDayCn + '</div>';
-            }else{
-                dayobj.innerHTML = '<div class="solar">' + dayInfo[2] + '</div>' + '<div class="lunar">'+ dayInfoDetail.IDayCn + '</div>';
-            }
-            document.getElementById("days").appendChild(dayobj);
-            //dayobj.innerHTML = i;
+            //dayobj.className="day";
+            dayobj.dataset.name = year + "-" + ( parseInt(month) + 1 ) + "-" + i;
 
             //设置当天的样式
-            if(nowDay.getFullYear()==year && nowDay.getMonth()==month && nowDay.getDate()==i)
+            if(nowDay.getFullYear()===year && nowDay.getMonth()===month && nowDay.getDate()===i)
             {
                 dayobj.id="thisDay";
-                _setDayInfo(nowDay.getFullYear(), nowDay.getMonth(), nowDay.getDate());
+                _setDayInfo(nowDay.getFullYear(), nowDay.getMonth()+1, nowDay.getDate());
             }
 
-            //dayobj.onmouseover= function(){
-            //    this.style.backgroundColor="#f5f5f5";
-            //};
-            //
-            //dayobj.onmouseout= function(){
-            //    this.style.backgroundColor="#fff";
-            //};
-
-            dayobj.onclick= function(){
-                var dayInfo = this.name.split('-');
-                //console.log(dayInfo);
-                _setDayInfo(dayInfo[0], dayInfo[1], dayInfo[2]);
-                //document.getElementById("borthText").value = this.name;
-            }
+            _classCountByMonthAndDay(dayobj, 'day');
+            _dayInformation(dayobj);
         }
         //显示每月后空余的天数
         var lastMonthDaysCount = 42 - count;
         for(i= 0; i < lastMonthDaysCount; i++) {
             dayobj = document.createElement("div");
-            dayobj.className="dayOfOtherMonth";
+            //dayobj.className="dayOfOtherMonth";
             if(parseInt(month) === 11){
                 //month = 0;
                 //year = parseInt(year) + 1;
-                dayobj.name= (parseInt(year) + 1) + "-" + 1 + "-" + (i + 1);
+                dayobj.dataset.name= (parseInt(year) + 1) + "-" + 1 + "-" + (i + 1);
                 //console.log('****'+dayobj.name);
             }else{
-                dayobj.name=parseInt(year) + "-" + (parseInt(month) + 2) + "-" + (i + 1);
+                dayobj.dataset.name=parseInt(year) + "-" + (parseInt(month) + 2) + "-" + (i + 1);
                 //console.log(dayobj.name);
             }
-            //dayobj.name=year+"-"+(parseInt(month) + 2)+"-"+(i + 1);
-            var dayInfo = dayobj.name.split('-'),
-                dayInfoDetail = calendar.solar2lunar(dayInfo[0], dayInfo[1], dayInfo[2]);
-            //dayobj.name=year+"-"+(parseInt(month))+"-"+(lastDayOfLastMonth - firstDayBefore + i + 1);
-            if(dayInfoDetail.nWeek === 6 || dayInfoDetail.nWeek === 7 ){
-                dayobj.innerHTML = '<div class="solar weekend">' + dayInfo[2] + '</div>' + '<div class="lunar">'+ dayInfoDetail.IDayCn + '</div>';
-            }else{
-                dayobj.innerHTML = '<div class="solar">' + dayInfo[2] + '</div>' + '<div class="lunar">'+ dayInfoDetail.IDayCn + '</div>';
-            }
-            document.getElementById("days").appendChild(dayobj);
-            dayobj.onclick= function(){
-                //document.getElementById("borthText").value = this.name;
-                var dayInfo = this.name.split('-');
-                //console.log(dayInfo);
-                _almanacRender(dayInfo);
-            }
-            //dayobj.innerHTML = i + 1;
-            //document.getElementById("days").appendChild(dayobj);
-            //dayobj.onclick= function(){
-            //    //document.getElementById("borthText").value = this.name;
-            //    var dayInfo = this.name.split('-');
-            //    //console.log(dayInfo);
-            //    _almanacRender(dayInfo);
-            //}
+            _classCountByMonthAndDay(dayobj, 'dayOfOtherMonth');
+            _dayInformation(dayobj);
         }
     };
+    var _classCountByMonthAndDay = function(dayObj, classname){
+        var _month = '',
+            _day = '',
+            dayString = '',
+            dayObjArr = dayObj.dataset.name.split('-');
+        //console.log(dayObj.dataset.name)
+        if(dayObjArr[1] < 10){
+            _month = '0' + dayObjArr[1];
+        }else{
+            _month = '' + dayObjArr[1];
+        }
+        if(dayObjArr[2] < 10){
+            _day = '0' + dayObjArr[2];
+        }else{
+            _day = '' + dayObjArr[2];
+        }
+        dayString = _month+_day;
+        if(dayString in _ftvVacation){
+            dayObj.className = classname + ' day-vacation';
+        }else if(dayString in _ftvWorkday){
+            dayObj.className = classname + ' day-workday';
+        }else {
+            dayObj.className = classname;
+            //console.log(classname);
+        }
+    }
+    //渲染每天农历相关信息，初一变为月份、节气显示，周末数字颜色、节气文字颜色
+    var _dayInformation = function(dayobj){
+        var dayInfo = dayobj.dataset.name.split('-'),
+            dayInfoDetail = calendar.solar2lunar(dayInfo[0], dayInfo[1], dayInfo[2]);
+        var innerhtml = '',
+            solarDay = '',
+            lunarDay = '';
+            //solarDayInfo = '',
+            //lunarDayInfo= '';
+        //solarDayInfo = (dayInfoDetail.cMonth < 10 ? ('0'+dayInfoDetail.cMonth) : dayInfoDetail.cMonth) + (dayInfoDetail.cDay < 10 ? ('0'+dayInfoDetail.cDay) : dayInfoDetail.cDay);
+        //solarDayInfo = dayInfo[1] + dayInfo[2];
+        //lunarDayInfo = (dayInfoDetail.lMonth < 10 ? ('0'+dayInfoDetail.lMonth) : dayInfoDetail.lMonth) + (dayInfoDetail.lDay < 10 ? ('0'+dayInfoDetail.lDay) : dayInfoDetail.lDay);
+        //console.log(lunarDayInfo);
+        if(dayInfoDetail.nWeek === 6 || dayInfoDetail.nWeek === 7 ){
+            solarDay = '<div class="solar weekend">' + parseInt(dayInfo[2]) + '</div>';
+        }else{
+            solarDay = '<div class="solar">' + parseInt(dayInfo[2]) + '</div>';
+        }
+        //渲染公历节日和农历节日
+        if(dayInfoDetail.isSolarFestival){
+            lunarDay = '<div class="lunar lunar-vacation" title="'+ dayInfoDetail.solarFestival +' ">'+ dayInfoDetail.solarFestival + '</div>';
+        }else if(dayInfoDetail.isLunarFestival){
+            lunarDay = '<div class="lunar lunar-vacation" title="'+ dayInfoDetail.lunarFestival +' ">'+ dayInfoDetail.lunarFestival + '</div>';
+        }else if(dayInfoDetail.isTerm){
+            lunarDay = '<div class="lunar lunar-term">'+ dayInfoDetail.Term + '</div>';
+        }else{
+            if(dayInfoDetail.IDayCn === '初一'){
+                lunarDay = '<div class="lunar">'+ dayInfoDetail.IMonthCn + '</div>'
+            }else{
+                lunarDay = '<div class="lunar">'+ dayInfoDetail.IDayCn + '</div>';
+            }
+        }
+
+        innerhtml = '<span class="logo-border"></span>' + solarDay + lunarDay;
+        dayobj.innerHTML = innerhtml;
+        document.getElementById("days").appendChild(dayobj);
+        dayobj.onclick= function(){
+            var dayInfo = this.dataset.name.split('-');
+            _almanacRender(dayInfo);
+        }
+    }
     //页面重新渲染，并更新农历信息
     var _almanacRender = function(dayInfo){
         document.getElementById("days").innerHTML="";
@@ -143,9 +198,9 @@ var calendar360Star = (function(){
             return 30;
         if(month===2)
         {
-            if(((year%4===0)&&(year%100!==0)) || (year%400 === 0))
-                return 28;
-            return 29;
+            if(((year%4 === 0)&&(year%100 !== 0)) || (year%400 === 0))
+                return 29;
+            return 28;
         }
         return 31;
     };
@@ -189,13 +244,22 @@ var calendar360Star = (function(){
         document.getElementById('date-show-today').innerHTML = dayInfo.cDay;
         document.getElementById('lunar').innerHTML = '农历' + dayInfo.IMonthCn + dayInfo.IDayCn;
         document.getElementById('lunar-ganzhi').innerHTML = dayInfo.gzYear + '年' + dayInfo.gzMonth + '月' + dayInfo.gzDay + '日';
-        document.getElementById('other-info').innerHTML = '[' + dayInfo.Animal + '年]';
+        var otherInfo = '[' + dayInfo.Animal + '年]';
+        if(dayInfo.isSolarFestival){
+            otherInfo += dayInfo.solarFestival;
+        }else if(dayInfo.isLunarFestival){
+            otherInfo += dayInfo.lunarFestival;
+            console.log(otherInfo);
+        }else if(dayInfo.isTerm){
+            otherInfo += dayInfo.Term;
+        }
+        document.getElementById('other-info').innerHTML = otherInfo;
     }
 
     //渲染日历主体结构
     var _render = function(id){
         var wrapId = document.getElementById(id);
-        wrapId.innerHTML = '<div class="calendar-container"><div id="setDate"><label for="setYear">选择年份：</label><select id="setYear"></select><label for="setMonth">选择月份：</label><select id="setMonth"></select><label for="holiday">节假日安排：</label><select id="holiday"></select> <div id="returnToday">返回今天</div>   <span>北京时间:<span id="nowTime"></span></span> </div> <!-- 日历 begin--> <div class="main-calendar-body clearfix"> <div id ="dateBody"> <div class="weekday">日</div> <div class="weekday">一</div> <div class="weekday">二</div> <div class="weekday">三</div> <div class="weekday">四</div><div class="weekday">五</div> <div class="weekday">六</div> <!-- 日历天数显示 begin--><div  id="days"></div> <!-- 日历天数显示 end-->   <br style="clear:both;" />   </div>  <div class="information"><div class="almanac">    <div class="date-bar">    <span class="now-date" id="now-date"></span>  <span class="now-weekday" id="now-weekday"></span> </div> <div class="date-show-today" id="date-show-today"></div> <div class="date-desc"> <div class="lunar" id="lunar"></div>  <div class="lunar-ganzhi" id="lunar-ganzhi"></div>  <div class="other-info" id="other-info"></div></div>   </div> </div> </div></div><!--日历 end -->';
+        wrapId.innerHTML = '<div class="calendar-container"><div id="setDate"><label for="setYear">选择年份：</label><select id="setYear"></select><label for="setMonth">选择月份：</label><select id="setMonth"></select><label for="holiday">节假日安排：</label><select id="holiday"></select> <div id="returnToday">返回今天</div>   <span>北京时间:<span id="nowTime"></span></span> </div> <!-- 日历 begin--> <div class="main-calendar-body clearfix"> <div id ="dateBody"><div class="weekday-title clearfix"> <div class="weekday">日</div> <div class="weekday">一</div> <div class="weekday">二</div> <div class="weekday">三</div> <div class="weekday">四</div><div class="weekday">五</div> <div class="weekday">六</div></div> <!-- 日历天数显示 begin--><div  id="days" class="clearfix"></div> <!-- 日历天数显示 end--> </div>  <div class="information"><div class="almanac">    <div class="date-bar">    <span class="now-date" id="now-date"></span>  <span class="now-weekday" id="now-weekday"></span> </div> <div class="date-show-today" id="date-show-today"></div> <div class="date-desc"> <div class="lunar" id="lunar"></div>  <div class="lunar-ganzhi" id="lunar-ganzhi"></div>  <div class="other-info" id="other-info"></div></div>   </div> <div class="weather-forcast"><iframe src ="./html5weather/index.html" width="100%" height="145" scrolling="no" frameborder="0"><p>Your browser does not support iframes.</p></iframe></div></div> </div></div><!--日历 end -->';
         //时间初始化
         var nowDate = new Date(),
             hour = nowDate.getHours(),
@@ -237,14 +301,60 @@ var calendar360Star = (function(){
 
     var _bindClick = function(that) {
         that.onclick = function(){
-            var nowDay = new Date();
+            var nowDay = new Date(),
+                dayInfo = [];
+            dayInfo[0] = nowDay.getFullYear();
+            dayInfo[1] = nowDay.getMonth()+1;
+            dayInfo[2] = nowDay.getDate();
+            //console.log(dayInfo)
             document.getElementById("setYear").selectedIndex = nowDay.getFullYear() - 1900;
             document.getElementById("setMonth").selectedIndex = parseInt(nowDay.getMonth());
+            //month = nowDay.getMonth()+1;
             _makeDays(nowDay.getFullYear(), nowDay.getMonth());
+            _almanacRender(dayInfo);
         }
     }
 
     var calendar = {
+        /**
+         * 国历节日Festival
+         */
+        sFtv : {
+            '0101': '元旦',
+            '0214': '情人节',
+            '0308': '妇女节',
+            '0312': '植树节',
+            '0315': '消费者权益日',
+            '0401': '愚人节',
+            '0501': '劳动节',
+            '0504': '青年节',
+            '0512': '护士节',
+            '0601': '儿童节',
+            '0701': '党的生日',
+            '0801': '建军节',
+            '0910': '教师节',
+            '1001': '国庆节',
+            '1006': '老人节',
+            '1024': '联合国日',
+            '1220': '澳门回归纪念日',
+            '1225': '圣诞节'
+        },
+
+        /**
+         * 农历节日
+         */
+        lFtv : {
+            '0101': '春节',
+            '0115': '元宵节',
+            '0505': '端午节',
+            '0707': '七夕',
+            '0715': '中元',
+            '0815': '中秋',
+            '0909': '重阳',
+            '1208': '腊八',
+            '1224': '小年'
+        },
+
         /**
          * 农历1900-2100的润大小信息表
          * 最后一位为闰月信息
@@ -609,7 +719,7 @@ var calendar360Star = (function(){
          */
         solar2lunar:function (y,m,d) { //参数区间1900.1.31~2100.12.31
             if(y<1900 || y>2100) {return -1;}//年份限定、上限
-            if(y==1900&&m==1&&d<31) {return -1;}//下限
+            if(y===1900&&m===1&&d<31) {return -1;}//下限
             if(!y) { //未传参 获得当天
                 var objDate = new Date();
             }else {
@@ -624,12 +734,12 @@ var calendar360Star = (function(){
 
             //是否今天
             var isTodayObj = new Date(),isToday=false;
-            if(isTodayObj.getFullYear()==y && isTodayObj.getMonth()+1==m && isTodayObj.getDate()==d) {
+            if(isTodayObj.getFullYear()===y && isTodayObj.getMonth()+1===m && isTodayObj.getDate()===d) {
                 isToday = true;
             }
             //星期几
             var nWeek = objDate.getDay(),cWeek = calendar.nStr1[nWeek];
-            if(nWeek==0) {nWeek =7;}//数字表示周几顺应天朝周一开始的惯例
+            if(nWeek===0) {nWeek =7;}//数字表示周几顺应天朝周一开始的惯例
             //农历年
             var year = i;
 
@@ -639,7 +749,7 @@ var calendar360Star = (function(){
             //效验闰月
             for(i=1; i<13 && offset>0; i++) {
                 //闰月
-                if(leap>0 && i==(leap+1) && isLeap==false){
+                if(leap>0 && i===(leap+1) && isLeap===false){
                     --i;
                     isLeap = true; temp = calendar.leapDays(year); //计算农历闰月天数
                 }
@@ -647,11 +757,11 @@ var calendar360Star = (function(){
                     temp = calendar.monthDays(year, i);//计算农历普通月天数
                 }
                 //解除闰月
-                if(isLeap==true && i==(leap+1)) { isLeap = false; }
+                if(isLeap===true && i===(leap+1)) { isLeap = false; }
                 offset -= temp;
             }
 
-            if(offset==0 && leap>0 && i==leap+1)
+            if(offset===0 && leap>0 && i===leap+1)
                 if(isLeap){
                     isLeap = false;
                 }else{
@@ -688,131 +798,6 @@ var calendar360Star = (function(){
             //传入的日期的节气与否
             var isTerm = false;
             var Term = null;
-            if(firstNode==d) {
-                isTerm = true;
-                Term = calendar.solarTerm[m*2-2];
-            }
-            if(secondNode==d) {
-                isTerm = true;
-                Term = calendar.solarTerm[m*2-1];
-            }
-            //日柱 当月一日与 1900/1/1 相差天数
-            var dayCyclical = Date.UTC(y,sm,1,0,0,0,0)/86400000+25567+10;
-            var gzD = calendar.toGanZhi(dayCyclical+d-1);
-
-            return {'lYear':year,'lMonth':month,'lDay':day,'Animal':calendar.getAnimal(year),'IMonthCn':(isLeap?"\u95f0":'')+calendar.toChinaMonth(month),'IDayCn':calendar.toChinaDay(day),'cYear':y,'cMonth':m,'cDay':d,'gzYear':gzY,'gzMonth':gzM,'gzDay':gzD,'isToday':isToday,'isLeap':isLeap,'nWeek':nWeek,'ncWeek':"\u661f\u671f"+cWeek,'isTerm':isTerm,'Term':Term};
-        },
-
-
-        /**
-         * 传入公历年月日获得详细的公历、农历object信息 <=>JSON
-         * @param y  solar year
-         * @param m solar month
-         * @param d  solar day
-         * @return JSON object
-         * @eg:console.log(calendar.solar2lunar(1987,11,01));
-         */
-        solar2lunar:function (y,m,d) { //参数区间1900.1.31~2100.12.31  因为1900.1.31正月初一
-            if(y < 1900 || y > 2100) {//年份限定、上限
-                return -1;
-            }
-            if(y === 1900 && m === 1 && d < 31) {//下限
-                return -1;
-            }
-            if(!y) { //未传参 获得当天
-                var objDate = new Date();
-            }else {
-                var objDate = new Date(y, parseInt(m)-1, d)
-            }
-            var i,
-                leap=0,
-                temp=0;
-            //修正ymd参数
-            var y = objDate.getFullYear(),
-                m = objDate.getMonth()+1,
-                d = objDate.getDate();
-            var offset = (Date.UTC(objDate.getFullYear(), objDate.getMonth(), objDate.getDate()) - Date.UTC(1900,0,31))/86400000;
-            for(i=1900; i<2101 && offset>0; i++) {
-                temp=calendar.lYearDays(i);
-                offset-=temp;
-            }
-            if(offset<0) {
-                offset+=temp;
-                i--;
-            }
-
-            //是否今天
-            var isTodayObj = new Date(),isToday=false;
-            if(isTodayObj.getFullYear()==y && isTodayObj.getMonth()+1==m && isTodayObj.getDate()==d) {
-                isToday = true;
-            }
-            //星期几
-            var nWeek = objDate.getDay(),cWeek = calendar.nStr1[nWeek];
-            if(nWeek==0) {nWeek =7;}//数字表示周几顺应天朝周一开始的惯例
-            //农历年
-            var year = i;
-
-            var leap = calendar.leapMonth(i); //闰哪个月
-            var isLeap = false;
-
-            //效验闰月
-            for(i=1; i<13 && offset>0; i++) {
-                //闰月
-                if(leap > 0 && i === (leap+1) && isLeap === false){
-                    --i;
-                    isLeap = true;
-                    temp = calendar.leapDays(year); //计算农历闰月天数
-                }
-                else{
-                    temp = calendar.monthDays(year, i);//计算农历普通月天数
-                }
-                //解除闰月
-                if(isLeap === true && i === (leap+1)) {
-                    isLeap = false;
-                }
-                offset -= temp;
-            }
-
-            if(offset ===0 && leap > 0 && i === leap+1)
-                if(isLeap){
-                    isLeap = false;
-                }else{
-                    isLeap = true; --i;
-                }
-            if(offset < 0){
-                offset += temp;
-                --i;
-            }
-            //农历月
-            var month = i;
-            //农历日
-            var day = offset + 1;
-
-            //天干地支处理
-            var sm = m-1;
-            var term3 = calendar.getTerm(year,3); //该农历年立春日期
-            var gzY = calendar.toGanZhi(year-4);//普通按年份计算，下方尚需按立春节气来修正
-
-            //依据立春日进行修正gzY
-            if(sm < 2 && d < term3) {
-                gzY = calendar.toGanZhi(year-5);
-            }else {
-                gzY = calendar.toGanZhi(year-4);
-            }
-
-            //月柱 1900年1月小寒以前为 丙子月(60进制12)
-            var firstNode = calendar.getTerm(y,(m*2-1));//返回当月「节」为几日开始
-            var secondNode = calendar.getTerm(y,(m*2));//返回当月「节」为几日开始
-
-            //依据12节气修正干支月
-            var gzM = calendar.toGanZhi((y-1900)*12+m+11);
-            if(d>=firstNode) {
-                gzM = calendar.toGanZhi((y-1900)*12+m+12);
-            }
-
-            //传入的日期的节气与否
-            var isTerm = false;
-            var Term = null;
             if(firstNode === d) {
                 isTerm = true;
                 Term = calendar.solarTerm[m*2-2];
@@ -825,12 +810,31 @@ var calendar360Star = (function(){
             var dayCyclical = Date.UTC(y,sm,1,0,0,0,0)/86400000+25567+10;
             var gzD = calendar.toGanZhi(dayCyclical+d-1);
 
-            return {'lYear':year,'lMonth':month,'lDay':day,'Animal':calendar.getAnimal(year),'IMonthCn':(isLeap?"\u95f0":'')+calendar.toChinaMonth(month),'IDayCn':calendar.toChinaDay(day),'cYear':y,'cMonth':m,'cDay':d,'gzYear':gzY,'gzMonth':gzM,'gzDay':gzD,'isToday':isToday,'isLeap':isLeap,'nWeek':nWeek,'ncWeek':"\u661f\u671f"+cWeek,'isTerm':isTerm,'Term':Term};
+            //节日信息
+            var isSolarFestival = false,
+                solarFestival = null,
+                isLunarFestival = false,
+                lunarFestival = null;
+            var nowDateStr = (m<10 ? '0'+m : m+'') + (d<10 ? '0'+d : d+'');
+            //console.log(nowDateStr);
+            if(nowDateStr in calendar.sFtv){
+                isSolarFestival = true;
+                solarFestival = calendar.sFtv[nowDateStr];
+            }
+            var nowLunarDate = (month < 10 ? '0'+month : month) + (day < 10 ? '0'+day : day);
+            //console.log(nowLunarDate);
+            if(nowLunarDate in calendar.lFtv){
+                //console.log(calendar.lFtv[nowLunarDate]);
+                isLunarFestival = true;
+                lunarFestival = calendar.lFtv[nowLunarDate];
+                //console.log('========'+lunarFestival);
+            }
+
+            return {'lYear':year,'lMonth':month,'lDay':day,'Animal':calendar.getAnimal(year),'IMonthCn':(isLeap?"\u95f0":'')+calendar.toChinaMonth(month),'IDayCn':calendar.toChinaDay(day),'cYear':y,'cMonth':m,'cDay':d,'gzYear':gzY,'gzMonth':gzM,'gzDay':gzD,'isToday':isToday,'isLeap':isLeap,'nWeek':nWeek,'ncWeek':"\u661f\u671f"+cWeek,'isTerm':isTerm,'Term':Term,'isSolarFestival':isSolarFestival,'solarFestival':solarFestival,'isLunarFestival':isLunarFestival,'lunarFestival':lunarFestival};
         },
 
-
         /**
-         * 传入公历年月日以及传入的月份是否闰月获得详细的公历、农历object信息 <=>JSON
+         * 传入农历年月日以及传入的月份是否闰月获得详细的公历、农历object信息 <=>JSON
          * @param y  lunar year
          * @param m lunar month
          * @param d  lunar day
@@ -843,7 +847,7 @@ var calendar360Star = (function(){
             var leapMonth = calendar.leapMonth(y);
             var leapDay = calendar.leapDays(y);
             if(isLeapMonth && (leapMonth!=m)) {return -1;}//传参要求计算该闰月公历 但该年得出的闰月与传参的月份并不同
-            if(y==2100&&m==12&&d>1 || y==1900&&m==1&&d<31) {return -1;}//超出了最大极限值
+            if(y===2100&&m===12&&d>1 || y===1900&&m===1&&d<31) {return -1;}//超出了最大极限值
             var day = calendar.monthDays(y,m);
             if(y<1900 || y>2100 || d>day) {return -1;}//参数合法性效验
 

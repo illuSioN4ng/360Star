@@ -10,7 +10,86 @@
  * @公历转农历：calendar.solar2lunar(1987,11,01); //[you can ignore params of prefix 0]
  * @农历转公历：calendar.lunar2solar(1987,09,10); //[you can ignore params of prefix 0]
  */
+/**
+ * 节假日信息
+ */
+//ftvVoc : {
+//    '0103': {//元旦
+//        date: '0101',
+//            vocation: ['0101', '0102', '0103'],
+//            workday: 'undefined'
+//    },
+//    '0213': {//春节
+//        date: '0208',
+//            vocation: ['0207', '0208', '0209', '0210', '0211', '0212', '0213'],
+//            workday: ['0206', '0214']
+//    },
+//    '0404': {//清明
+//        date: '0404',
+//            vocation: ['0402', '0403', '0404'],
+//            workday: 'undefined'
+//    },
+//    '0502': {//五一
+//        date: '0501',
+//            vocation: ['0430', '0501', '0502'],
+//            workday: 'undefined'
+//    },
+//    '0611': {//端午
+//        date: '0609',
+//            vocation: ['0609', '0610', '0611'],
+//            workday: ['0612']
+//    },
+//    '0917': {//中秋
+//        date: '0915',
+//            vocation: ['0915', '0916', '0917'],
+//            workday: ['0918']
+//    },
+//    '1007': {//国庆
+//        date: '1001',
+//            vocation: ['1001', '1002', '1003', '1004', '1005', '1006', '1007'],
+//            workday: ['1008', '1009']
+//    }
+//},
 var calendar = {
+    /**
+     * 国历节日Festival
+     */
+    sFtv : {
+        '0101': '元旦',
+        '0214': '情人节',
+        '0308': '妇女节',
+        '0312': '植树节',
+        '0315': '消费者权益日',
+        '0401': '愚人节',
+        '0501': '劳动节',
+        '0504': '青年节',
+        '0512': '护士节',
+        '0601': '儿童节',
+        '0701': '党的生日',
+        '0801': '建军节',
+        '0910': '教师节',
+        '1001': '国庆节',
+        '1006': '老人节',
+        '1024': '联合国日',
+        '1220': '澳门回归纪念日',
+        '1225': '圣诞节'
+    },
+
+    /**
+     * 农历节日
+     */
+    lFtv : {
+        '0101': '春节',
+        '0115': '元宵节',
+        '0505': '端午节',
+        '0707': '七夕',
+        '0715': '中元',
+        '0815': '中秋',
+        '0909': '重阳',
+        '1208': '腊八',
+        '1224': '小年'
+    },
+
 
     /**
      * 农历1900-2100的润大小信息表
@@ -468,137 +547,30 @@ var calendar = {
         var dayCyclical = Date.UTC(y,sm,1,0,0,0,0)/86400000+25567+10;
         var gzD = calendar.toGanZhi(dayCyclical+d-1);
 
-        return {'lYear':year,'lMonth':month,'lDay':day,'Animal':calendar.getAnimal(year),'IMonthCn':(isLeap?"\u95f0":'')+calendar.toChinaMonth(month),'IDayCn':calendar.toChinaDay(day),'cYear':y,'cMonth':m,'cDay':d,'gzYear':gzY,'gzMonth':gzM,'gzDay':gzD,'isToday':isToday,'isLeap':isLeap,'nWeek':nWeek,'ncWeek':"\u661f\u671f"+cWeek,'isTerm':isTerm,'Term':Term};
+        //节日信息
+        var isSolarFestival = false,
+            solarFestival = null,
+            isLunarFestival = false,
+            lunarFestival = null;
+        var nowDateStr = (m<10 ? '0'+m : m+'') + (d<10 ? '0'+d : d+'');
+        //console.log(nowDateStr);
+        if(nowDateStr in calendar.sFtv){
+            isSolarFestival = true;
+            solarFestival = calendar.sFtv[nowDateStr];
+        }
+        var nowLunarDate = (month < 10 ? '0'+month : month) + (day < 10 ? '0'+day : day);
+        //console.log(nowLunarDate);
+        if(nowLunarDate in calendar.lFtv){
+            //console.log(calendar.lFtv[nowLunarDate]);
+            isLunarFestival = true;
+            lunarFestival = calendar.lFtv[nowLunarDate];
+        }
+
+        return {'lYear':year,'lMonth':month,'lDay':day,'Animal':calendar.getAnimal(year),'IMonthCn':(isLeap?"\u95f0":'')+calendar.toChinaMonth(month),'IDayCn':calendar.toChinaDay(day),'cYear':y,'cMonth':m,'cDay':d,'gzYear':gzY,'gzMonth':gzM,'gzDay':gzD,'isToday':isToday,'isLeap':isLeap,'nWeek':nWeek,'ncWeek':"\u661f\u671f"+cWeek,'isTerm':isTerm,'Term':Term,'isSolarFestival':isSolarFestival,'solarFestival':solarFestival,'isLunarFestival':isLunarFestival,'LunarFestival':lunarFestival};
     },
 
-
     /**
-     * 传入公历年月日获得详细的公历、农历object信息 <=>JSON
-     * @param y  solar year
-     * @param m solar month
-     * @param d  solar day
-     * @return JSON object
-     * @eg:console.log(calendar.solar2lunar(1987,11,01));
-     */
-    solar2lunar:function (y,m,d) { //参数区间1900.1.31~2100.12.31  因为1900.1.31正月初一
-        if(y < 1900 || y > 2100) {//年份限定、上限
-            return -1;
-        }
-        if(y === 1900 && m === 1 && d < 31) {//下限
-            return -1;
-        }
-        if(!y) { //未传参 获得当天
-            var objDate = new Date();
-        }else {
-            var objDate = new Date(y, parseInt(m)-1, d)
-        }
-        var i,
-            leap=0,
-            temp=0;
-        //修正ymd参数
-        var y = objDate.getFullYear(),
-            m = objDate.getMonth()+1,
-            d = objDate.getDate();
-        var offset = (Date.UTC(objDate.getFullYear(), objDate.getMonth(), objDate.getDate()) - Date.UTC(1900,0,31))/86400000;
-        for(i=1900; i<2101 && offset>0; i++) {
-            temp=calendar.lYearDays(i);
-            offset-=temp;
-        }
-        if(offset<0) {
-            offset+=temp;
-            i--;
-        }
-
-        //是否今天
-        var isTodayObj = new Date(),isToday=false;
-        if(isTodayObj.getFullYear()==y && isTodayObj.getMonth()+1==m && isTodayObj.getDate()==d) {
-            isToday = true;
-        }
-        //星期几
-        var nWeek = objDate.getDay(),cWeek = calendar.nStr1[nWeek];
-        if(nWeek==0) {nWeek =7;}//数字表示周几顺应天朝周一开始的惯例
-        //农历年
-        var year = i;
-
-        var leap = calendar.leapMonth(i); //闰哪个月
-        var isLeap = false;
-
-        //效验闰月
-        for(i=1; i<13 && offset>0; i++) {
-            //闰月
-            if(leap > 0 && i === (leap+1) && isLeap === false){
-                --i;
-                isLeap = true;
-                temp = calendar.leapDays(year); //计算农历闰月天数
-            }
-            else{
-                temp = calendar.monthDays(year, i);//计算农历普通月天数
-            }
-            //解除闰月
-            if(isLeap === true && i === (leap+1)) {
-                isLeap = false;
-            }
-            offset -= temp;
-        }
-
-        if(offset ===0 && leap > 0 && i === leap+1)
-            if(isLeap){
-                isLeap = false;
-            }else{
-                isLeap = true; --i;
-            }
-        if(offset < 0){
-            offset += temp;
-            --i;
-        }
-        //农历月
-        var month = i;
-        //农历日
-        var day = offset + 1;
-
-        //天干地支处理
-        var sm = m-1;
-        var term3 = calendar.getTerm(year,3); //该农历年立春日期
-        var gzY = calendar.toGanZhi(year-4);//普通按年份计算，下方尚需按立春节气来修正
-
-        //依据立春日进行修正gzY
-        if(sm < 2 && d < term3) {
-            gzY = calendar.toGanZhi(year-5);
-        }else {
-            gzY = calendar.toGanZhi(year-4);
-        }
-
-        //月柱 1900年1月小寒以前为 丙子月(60进制12)
-        var firstNode = calendar.getTerm(y,(m*2-1));//返回当月「节」为几日开始
-        var secondNode = calendar.getTerm(y,(m*2));//返回当月「节」为几日开始
-
-        //依据12节气修正干支月
-        var gzM = calendar.toGanZhi((y-1900)*12+m+11);
-        if(d>=firstNode) {
-            gzM = calendar.toGanZhi((y-1900)*12+m+12);
-        }
-
-        //传入的日期的节气与否
-        var isTerm = false;
-        var Term = null;
-        if(firstNode === d) {
-            isTerm = true;
-            Term = calendar.solarTerm[m*2-2];
-        }
-        if(secondNode === d) {
-            isTerm = true;
-            Term = calendar.solarTerm[m*2-1];
-        }
-        //日柱 当月一日与 1900/1/1 相差天数
-        var dayCyclical = Date.UTC(y,sm,1,0,0,0,0)/86400000+25567+10;
-        var gzD = calendar.toGanZhi(dayCyclical+d-1);
-
-        return {'lYear':year,'lMonth':month,'lDay':day,'Animal':calendar.getAnimal(year),'IMonthCn':(isLeap?"\u95f0":'')+calendar.toChinaMonth(month),'IDayCn':calendar.toChinaDay(day),'cYear':y,'cMonth':m,'cDay':d,'gzYear':gzY,'gzMonth':gzM,'gzDay':gzD,'isToday':isToday,'isLeap':isLeap,'nWeek':nWeek,'ncWeek':"\u661f\u671f"+cWeek,'isTerm':isTerm,'Term':Term};
-    },
-
-
-    /**
-     * 传入公历年月日以及传入的月份是否闰月获得详细的公历、农历object信息 <=>JSON
+     * 传入农历年月日以及传入的月份是否闰月获得详细的公历、农历object信息 <=>JSON
      * @param y  lunar year
      * @param m lunar month
      * @param d  lunar day
@@ -645,4 +617,4 @@ var calendar = {
     }
 };
 
-console.log(calendar.solar2lunar(2033, 12, 26));
+console.log(calendar.solar2lunar(2016,6, 9));
