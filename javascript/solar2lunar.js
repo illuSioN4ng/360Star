@@ -566,7 +566,30 @@ var calendar = {
             lunarFestival = calendar.lFtv[nowLunarDate];
         }
 
-        return {'lYear':year,'lMonth':month,'lDay':day,'Animal':calendar.getAnimal(year),'IMonthCn':(isLeap?"\u95f0":'')+calendar.toChinaMonth(month),'IDayCn':calendar.toChinaDay(day),'cYear':y,'cMonth':m,'cDay':d,'gzYear':gzY,'gzMonth':gzM,'gzDay':gzD,'isToday':isToday,'isLeap':isLeap,'nWeek':nWeek,'ncWeek':"\u661f\u671f"+cWeek,'isTerm':isTerm,'Term':Term,'isSolarFestival':isSolarFestival,'solarFestival':solarFestival,'isLunarFestival':isLunarFestival,'LunarFestival':lunarFestival};
+        return {
+            'lYear':year,
+            'lMonth':month,
+            'lDay':day,
+            'Animal':calendar.getAnimal(year),
+            'IMonthCn':(isLeap?"\u95f0":'')+calendar.toChinaMonth(month),
+            'IDayCn':calendar.toChinaDay(day),
+            'cYear':y,
+            'cMonth':m,
+            'cDay':d,
+            'gzYear':gzY,
+            'gzMonth':gzM,
+            'gzDay':gzD,
+            'isToday':isToday,
+            'isLeap':isLeap,
+            'nWeek':nWeek,
+            'ncWeek':"\u661f\u671f"+cWeek,
+            'isTerm':isTerm,
+            'Term':Term,
+            'isSolarFestival':isSolarFestival,
+            'solarFestival':solarFestival,
+            'isLunarFestival':isLunarFestival,
+            'LunarFestival':lunarFestival
+        };
     },
 
     /**
@@ -617,4 +640,4 @@ var calendar = {
     }
 };
 
-console.log(calendar.solar2lunar(2016,6, 9));
+console.log(calendar.solar2lunar(2016,2, 8));
