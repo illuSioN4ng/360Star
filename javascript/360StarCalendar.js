@@ -312,10 +312,13 @@ var calendar360Star = (function(){
                 if(that.selectedIndex !== 0){
                     //console.log(that.value)
                     var holidayInfo = that.value.split('-');
-                    //console.log(holidayInfo)
                     year = parseInt(holidayInfo[0]);
                     month = parseInt(holidayInfo[1])-1;
-                    _setDayInfo(holidayInfo[0], holidayInfo[1], holidayInfo[2]);
+                    document.getElementById("days").innerHTML="";
+                    _makeDays(year, month);
+                    _setDayInfo(parseInt(holidayInfo[0]), parseInt(holidayInfo[1]), parseInt(holidayInfo[2]));
+                    document.getElementById("holiday").selectedIndex = 0;
+                    return;
                 }
             }
             document.getElementById("days").innerHTML="";
