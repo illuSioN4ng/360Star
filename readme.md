@@ -1,7 +1,7 @@
 ## 360Star前端星计划之万年历
 [demo](http://la413972057.github.io/360Star/demo.html)
 ### 组件文件： 360StarCalendar.js    
-1. 使用方法：
+1. 使用方法：    
 新建calender360Star对象并链式调用init方法，传入配置信息，配置信息详细见下文。    
 ```
 window.onload = function(){
@@ -12,8 +12,7 @@ window.onload = function(){
     });
 };
 ```
-
-2. 配置信息介绍
+2. 配置信息介绍    
   - yearNum：显示从1900年开始到yearNum设置时间的日历信息，（数据库中的信息只保存1900-2100年信息）
   - wrapId : 包裹日历插件的盒子ID
   - weather: 布尔型，是否需要weather插件。
