@@ -65,7 +65,7 @@ ISP：remote_ip_info.isp
 2. calendar对象
   具体实现请看代码注释。
   canlendar.solar2lunar(y, m, d)方法返回如下：    
-  ```
+```
   { 
   lYear: 2016,
     lMonth: 1,
@@ -90,4 +90,8 @@ ISP：remote_ip_info.isp
     isLunarFestival: true,
     LunarFestival: '春节' 
     }
-  ```
+```
+
+### 已知不足
+1. 没有实现农历宜忌相关代码，Orz~~~~
+2. 天气插件直接拿之前的demo来修改，使用了jQuery。
