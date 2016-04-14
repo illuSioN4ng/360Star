@@ -1,4 +1,5 @@
 ## 360Star前端星计划之万年历
+[demo](http://la413972057.github.io/360Star/demo.html)
 ### 组件文件： 360StarCalendar.js    
 1. 使用方法：
 新建calender360Star对象并链式调用init方法，传入配置信息，配置信息详细见下文。    
@@ -63,7 +64,7 @@ ISP：remote_ip_info.isp
       主要阴阳历转换均在该函数中。
 2. calendar对象
   具体实现请看代码注释。
-  solar2lunar(y, m, d)方法返回如下：    
+  canlendar.solar2lunar(y, m, d)方法返回如下：    
   ```
   { 
   lYear: 2016,
