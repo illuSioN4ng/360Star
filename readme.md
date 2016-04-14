@@ -11,8 +11,7 @@ window.onload = function(){
         weather: true
     });
 };
-```
-2. 配置信息介绍    
+```2. 配置信息介绍    
   - yearNum：显示从1900年开始到yearNum设置时间的日历信息，（数据库中的信息只保存1900-2100年信息）
   - wrapId : 包裹日历插件的盒子ID
   - weather: 布尔型，是否需要weather插件。
