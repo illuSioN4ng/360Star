@@ -394,14 +394,17 @@ a:focus {
     The 'imagination' step is again some boring font-sizing.
 */
 
-#imagination {
-    width: 600px;
-}
+/*#imagination {*/
+    /*width: 600px;*/
+/*}*/
 
 #imagination .imagination {
     font-size: 78px;
 }
 
+.chromeBug {
+    width:1000px;
+}
 /*
     There is nothing really special about 'use the source, Luke' step, too,
     except maybe of the Yoda background.
@@ -424,6 +427,10 @@ a:focus {
 
 #source q {
     font-size: 60px;
+}
+
+#source img{
+    width:600px;
 }
 
 /*
@@ -502,6 +509,14 @@ a:focus {
     -ms-transform:     translateZ(-10px);
     -o-transform:      translateZ(-10px);
     transform:         translateZ(-10px);
+}
+.food{
+    width:200px;
+    height:200px;
+}
+.team {
+    width:400px;
+    transform: rotate(50deg);
 }
 
 #its-in-3d .footnote {
