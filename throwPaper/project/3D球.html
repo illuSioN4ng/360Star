@@ -1,0 +1,164 @@
+﻿<html>
+	<head>
+		<title>
+			再回首，那只小球已停止转动——HTML5实现3D球效果
+		</title>
+		<meta charset="utf-8">
+		<style type="text/css">  
+            #box{   
+                border:2px solid #f60; margin:0 auto;  
+            }  
+        </style>  
+		<script>
+			
+			var speedX = 0; //X方向的速度 
+			var speedY = 0; //Y方向的速度
+			var speedZ = 0; //Z方向的速度
+
+			var innerStaColor = "GREEN"; //表示内部颜色
+			var outerStaColor = "RED"; //外部颜色
+			var canvas; //画布
+			var context; //上下文
+			var focalLength = 300; //控制球距离屏幕的距离
+			var scaleRatio = 0;
+			var offsetX = 50; //X方向的偏移量相当于将球的中心X坐标移之到画布中央
+			var offsetY = 50; //Y方向的偏移量相当于将球的中心Y坐标移之到画布中央
+			var objectRadius = 10; //绘制原点半径
+			var cameraView = {
+				x: 0,
+				y: 0,
+				z: 0,
+				rotX: 0,
+				rotY: 0,
+				rotZ: 0
+			}; //视角角度
+			var ball = {
+				x:300,
+				y:500,
+				z:0,
+				radius:10,
+				color:'red'
+			};
+			/**
+			author:qingfeilee
+			date:2012-03-28
+			description:初始化系统画布信息
+		**/
+			function initCanvas() {
+				try{ 
+					canvas = document.getElementById("sphere");
+					context = canvas.getContext("2d");
+					context.fillStyle = 'rgba(0,0,0,0.1)';
+					context.fillRect(0, 0, canvas.width, canvas.height);
+				}catch(e){
+					 document.getElementById("tip_info").innerHTML = "您的浏览器不支持！";  
+				}
+			}
+			function initBall(){
+				context.beginPath();
+				context.arc(ball.x,ball.y,ball.radius,0,360,false);
+				context.fillStyle="red";//填充颜色,默认是黑色
+				context.fill();//画实心圆
+				context.closePath();
+			}
+	
+			function init() {
+				initCanvas();
+				initBall();
+				
+			}
+			
+			/**
+			author:qingfeilee
+			date:2012-03-28
+			description:渲染整个画布
+		**/
+			function render(object) {
+				var xy, xz, yx, yz, zx, zy;
+
+				// 计算出物体的相对于照相机的位置
+				var x = object.x - cameraView.x;
+				var y = object.y - cameraView.y;
+				var z = object.z - cameraView.z;
+				
+				// 绕X轴旋转
+				xy = cx * y - sx * z;
+				xz = sx * y + cx * z;
+				// 绕Y轴旋转
+				yz = cy * xz - sy * x;
+				yx = sy * xz + cy * x;
+				// 绕Z轴旋转
+				zx = cz * yx - sz * xy;
+				zy = sz * yx + cz * xy;
+				//给各个球重新定位
+				object.x = zx;
+				object.y = zy;
+				object.z = yz;
+
+				//根据z轴数据来缩放球
+				scaleRatio = focalLength / (focalLength + yz);
+				scale = scaleRatio;
+
+				if (object.glow > .5) {
+					object.glow -= .02;
+				}
+
+				/*var sphereStyle = context.createRadialGradient(offsetX + object.x * scaleRatio, offsetY + object.y * scaleRatio, 
+				scaleRatio * .5, offsetX + object.x * scaleRatio, offsetY + object.y * scaleRatio, scaleRatio * objectRadius * .5);
+				sphereStyle.addColorStop(0, innerStaColor);
+				sphereStyle.addColorStop(object.glow, outerStaColor);
+				sphereStyle.addColorStop(1, 'rgba(0,0,0,0)');
+*/
+				//context.fillStyle = sphereStyle;
+				context.fillStyle = "red"
+				context.fillRect(offsetX + object.x * scaleRatio - scaleRatio * objectRadius * .5, 
+				offsetY + object.y * scaleRatio - scaleRatio * objectRadius * .5, scaleRatio * objectRadius, scaleRatio * objectRadius);
+				
+			}
+
+			function run(){
+				setInterval(update, 1000 / 60);
+			}
+
+			function update(){
+				var rotYstep = 0 / 10000;
+				var rotXstep = 150 / 10000;
+				cameraView.rotY = rotYstep;
+				cameraView.rotX = -rotXstep;
+				//计算出对应的cos和sin
+				sx = Math.sin(cameraView.rotX);
+				cx = Math.cos(cameraView.rotX);
+				sy = Math.sin(cameraView.rotY);
+				cy = Math.cos(cameraView.rotY);
+				sz = Math.sin(cameraView.rotZ);
+				cz = Math.cos(cameraView.rotZ);
+
+				// 设置画布的效果
+				context.fillStyle = 'rgba(0,0,0,0.1)';
+				context.fillRect(0, 0, canvas.width, canvas.height);
+
+				
+				render(ball);
+				
+			}
+			
+			window.addEventListener("load", init, true);
+		</script>
+	</head>
+	<body>
+		<div id="box" style="width:600px; height:600px">  
+			<canvas id="sphere" width="600" height="600" style="background:#0066FF">
+			</canvas>
+			<div align="center">
+				<button id="swi" onclick="run()">
+					激活
+				</button>
+				
+				
+				
+			</div>
+			
+			
+		</div>
+	</body>
+</html>
