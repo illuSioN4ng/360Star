@@ -177,12 +177,14 @@ html,body {
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
-	background-color: #f00;
-	position: relative;
 	bottom:0%;
 	left: 50%;
 	margin-left: -5px;
 	position: absolute;
+	/*background-color: red;*/
+	background-size:10px 10px;
+	background-image:url(./imgs/ball.png);
+	background-repeat:no-repeat;
 
 	-webkit-transition: all 3s;
      -o-transition: all 3s;
