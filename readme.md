@@ -1,5 +1,5 @@
 ## 360Star前端星计划之万年历
-[demo](http://la413972057.github.io/360Star/demo.html)
+[demo](http://illusion4ng.github.io/360Star/demo.html)
 ### 组件文件： 360StarCalendar.js    
 - 使用方法：    
 新建calender360Star对象并链式调用init方法，传入配置信息，配置信息详细见下文。    
